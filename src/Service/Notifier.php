@@ -4,33 +4,31 @@
 namespace App\Service;
 
 use App\Entity\Offer;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Twig\Environment;
+use Psr\Log\LoggerInterface;
 
 class Notifier
 {
-    private $translator;
-    private $twig;
     private $mailer;
+    private $logger;
 
-    public function __construct( Environment $environment, \Swift_Mailer $mailer, TranslatorInterface $translator )
+    public function __construct( \Swift_Mailer $mailer, LoggerInterface $logger )
     {
         $this->mailer = $mailer;
-        $this->translator = $translator;
-        $this->twig = $environment;
+        $this->logger = $logger;
     }
 
-    public function notify( Offer $offer, array $info )
+    /**
+     * @param Offer $o
+     * @param array $applicantInfo
+     */
+    public function notify( Offer $o, array $applicantInfo )
     {
-        $to = $offer->getCompany()->getEmail();
-        $subject = $this->translator->trans('offer.new.application.received');
-        $body = '
-<p>'.$this->translator->trans('offer.title').'</p>
-<p>'.$info['name'].'</p>
-<p>'.$info['email'].'</p>';
-
-        $mail = new \Swift_Message( $subject, $body );
-        $mail->setTo( $to );
-        $this->mailer->send( $mail);
+        $mail = new \Swift_Message(
+            'Nuevo postulante para '.$o->getTitle().'!',
+            $applicantInfo['name'].' se ha postulado!, contactelo a '.$applicantInfo['email']
+        );
+        $mail->setTo( $o->getCompany()->getEmail() );
+        $this->mailer->send( $mail );
+        $this->logger->info('Se envio un mail a '.$o->getCompany()->getEmail() );
     }
 }

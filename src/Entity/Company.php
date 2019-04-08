@@ -24,7 +24,7 @@ class Company
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Industry")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Industry", inversedBy="companies")
      * @ORM\JoinColumn(nullable=false)
      */
     private $industry;
@@ -32,15 +32,15 @@ class Company
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $website;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     private $email;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Offer", mappedBy="Company", orphanRemoval=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $website;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Offer", mappedBy="company", orphanRemoval=true)
      */
     private $offers;
 
@@ -78,18 +78,6 @@ class Company
         return $this;
     }
 
-    public function getWebsite(): ?string
-    {
-        return $this->website;
-    }
-
-    public function setWebsite(string $website): self
-    {
-        $this->website = $website;
-
-        return $this;
-    }
-
     public function getEmail(): ?string
     {
         return $this->email;
@@ -98,6 +86,18 @@ class Company
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getWebsite(): ?string
+    {
+        return $this->website;
+    }
+
+    public function setWebsite(?string $website): self
+    {
+        $this->website = $website;
 
         return $this;
     }

@@ -17,15 +17,20 @@ class Offer
     private $id;
 
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="offers")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $company;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $title;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="offers")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="decimal", precision=10, scale=2)
      */
-    private $Company;
+    private $compensation;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\OfferType", inversedBy="offers")
@@ -33,14 +38,21 @@ class Offer
      */
     private $type;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=2)
-     */
-    private $compensation;
-
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getCompany(): ?Company
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?Company $company): self
+    {
+        $this->company = $company;
+
+        return $this;
     }
 
     public function getTitle(): ?string
@@ -55,14 +67,14 @@ class Offer
         return $this;
     }
 
-    public function getCompany(): ?Company
+    public function getCompensation()
     {
-        return $this->Company;
+        return $this->compensation;
     }
 
-    public function setCompany(?Company $Company): self
+    public function setCompensation($compensation): self
     {
-        $this->Company = $Company;
+        $this->compensation = $compensation;
 
         return $this;
     }
@@ -79,15 +91,8 @@ class Offer
         return $this;
     }
 
-    public function getCompensation()
+    public function __toString()
     {
-        return $this->compensation;
-    }
-
-    public function setCompensation($compensation): self
-    {
-        $this->compensation = $compensation;
-
-        return $this;
+        return $this->getTitle();
     }
 }
